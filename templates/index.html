@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serene — Your AI Voice Companion</title>
+  <meta name="description" content="Serene is a gentle, empathetic AI emotional voice companion powered by Google Gemini." />
+  
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: rgba(22, 28, 45, 0.65);
+      --border-glow: rgba(139, 92, 246, 0.25);
+      --primary-purple: #8b5cf6;
+      --primary-pink: #ec4899;
+      --accent-cyan: #06b6d4;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      max-width: 1100px;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .brand-name {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 30%, var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge-gemini {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Main Container */
+    main {
+      width: 100%;
+      max-width: 760px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex: 1;
+      z-index: 10;
+    }
+
+    .hero-title {
+      text-align: center;
+    }
+
+    .hero-title h1 {
+      font-family: var(--font-heading);
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-title p {
+      color: var(--text-muted);
+      font-size: 17px;
+    }
+
+    /* Voice Orb Interface */
+    .orb-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      animation: pulse 3s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.25); opacity: 0.15; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+
+    .orb-button {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+      border: none;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: white;
+      box-shadow: 
+        0 0 50px rgba(139, 92, 246, 0.4),
+        inset 0 0 20px rgba(255, 255, 255, 0.3);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      z-index: 5;
+    }
+
+    .orb-button:hover {
+      transform: scale(1.08);
+      box-shadow: 
+        0 0 70px rgba(236, 72, 153, 0.6),
+        inset 0 0 25px rgba(255, 255, 255, 0.5);
+    }
+
+    .orb-button.recording {
+      animation: recordGlow 1.2s infinite alternate;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+    }
+
+    @keyframes recordGlow {
+      0% { transform: scale(1.05); box-shadow: 0 0 40px rgba(239, 68, 68, 0.6); }
+      100% { transform: scale(1.15); box-shadow: 0 0 80px rgba(249, 115, 22, 0.9); }
+    }
+
+    .orb-button.thinking {
+      animation: spinGlow 2s infinite linear;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+    }
+
+    @keyframes spinGlow {
+      0% { transform: rotate(0deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(1.05); }
+    }
+
+    .orb-button.speaking {
+      animation: speakBounce 0.8s infinite alternate ease-in-out;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+    }
+
+    @keyframes speakBounce {
+      0% { transform: scale(1); box-shadow: 0 0 30px rgba(16, 185, 129, 0.5); }
+      100% { transform: scale(1.12); box-shadow: 0 0 70px rgba(6, 182, 212, 0.8); }
+    }
+
+    /* Status Label */
+    .status-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-main);
+      margin-top: 24px;
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Audio Waveform Animation */
+    .waveform {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      height: 24px;
+    }
+
+    .waveform.active {
+      display: flex;
+    }
+
+    .wave-bar {
+      width: 4px;
+      height: 100%;
+      background: var(--primary-purple);
+      border-radius: 4px;
+      animation: wave 1s infinite ease-in-out;
+    }
+
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; background: var(--primary-pink); }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; background: var(--accent-cyan); }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; background: var(--primary-purple); }
+
+    @keyframes wave {
+      0%, 100% { height: 6px; }
+      50% { height: 24px; }
+    }
+
+    /* Conversation Box */
+    .chat-card {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glow);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .chat-bubble {
+      padding: 16px 20px;
+      border-radius: 16px;
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 90%;
+      word-wrap: break-word;
+    }
+
+    .chat-bubble.serene {
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      color: #e2e8f0;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-bubble.serene strong {
+      color: var(--primary-pink);
+      display: block;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    /* Text Backup Input */
+    .text-input-group {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .text-input-group input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 14px 20px;
+      border-radius: 30px;
+      color: white;
+      font-family: var(--font-body);
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .text-input-group input:focus {
+      border-color: var(--primary-purple);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-send {
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+      border: none;
+      color: white;
+      padding: 0 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-send:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    /* Alert Banner */
+    .alert-box {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-box.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      display: flex;
+    }
+
+    /* Footer */
+    footer {
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 13px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo"><i class="fa-solid fa-heart"></i></div>
+      <div class="brand-name">Serene</div>
+    </div>
+    <div class="badge-gemini">
+      <i class="fa-solid fa-sparkles"></i> Powered by Gemini 2.5
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="hero-title">
+      <h1>Your AI Emotional Companion</h1>
+      <p>Click the orb to start speaking with Serene, or type a message below.</p>
+    </div>
+
+    <!-- Interactive Voice Orb -->
+    <div class="orb-wrapper">
+      <div class="pulse-ring"></div>
+      <button id="orbBtn" class="orb-button" title="Click to speak">
+        <i id="orbIcon" class="fa-solid fa-microphone"></i>
+      </button>
+
+      <div class="status-text">
+        <span id="statusLabel">Tap to talk to Serene</span>
+        <div id="waveform" class="waveform">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert Message (if error/missing API key) -->
+    <div id="alertBox" class="alert-box">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span id="alertMessage"></span>
+    </div>
+
+    <!-- Response / Conversation Container -->
+    <div id="chatCard" class="chat-card" style="display: none;">
+      <div class="chat-bubble serene">
+        <strong>Serene</strong>
+        <span id="responseText">I'm here for you. How are you feeling right now?</span>
+      </div>
+    </div>
+
+    <!-- Backup Text Input -->
+    <div class="text-input-group">
+      <input type="text" id="textInput" placeholder="Or type a message to Serene..." />
+      <button id="sendBtn" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </main>
+
+  <footer>
+    Serene AI Companion • Voice powered by Edge-TTS & Multimodal Reasoning by Google Gemini 2.5
+  </footer>
+
+  <script>
+    const orbBtn = document.getElementById('orbBtn');
+    const orbIcon = document.getElementById('orbIcon');
+    const statusLabel = document.getElementById('statusLabel');
+    const waveform = document.getElementById('waveform');
+    const chatCard = document.getElementById('chatCard');
+    const responseText = document.getElementById('responseText');
+    const alertBox = document.getElementById('alertBox');
+    const alertMessage = document.getElementById('alertMessage');
+    const textInput = document.getElementById('textInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecording = false;
+    let currentAudio = null;
+
+    // Helper: Set State
+    function setState(state, message = '') {
+      orbBtn.className = 'orb-button';
+      waveform.classList.remove('active');
+      alertBox.classList.remove('error');
+
+      if (state === 'idle') {
+        orbIcon.className = 'fa-solid fa-microphone';
+        statusLabel.textContent = message || 'Tap to talk to Serene';
+      } else if (state === 'recording') {
+        orbBtn.classList.add('recording');
+        orbIcon.className = 'fa-solid fa-square';
+        statusLabel.textContent = 'Listening... (Tap to finish)';
+        waveform.classList.add('active');
+      } else if (state === 'thinking') {
+        orbBtn.classList.add('thinking');
+        orbIcon.className = 'fa-solid fa-spinner fa-spin';
+        statusLabel.textContent = 'Serene is reflecting...';
+      } else if (state === 'speaking') {
+        orbBtn.classList.add('speaking');
+        orbIcon.className = 'fa-solid fa-volume-high';
+        statusLabel.textContent = 'Serene is speaking...';
+        waveform.classList.add('active');
+      }
+    }
+
+    function showError(msg) {
+      setState('idle', 'Tap to try again');
+      alertMessage.textContent = msg;
+      alertBox.classList.add('error');
+    }
+
+    // Initialize Microphone Recording
+    async function toggleRecording() {
+      if (isRecording) {
+        // Stop recording
+        mediaRecorder.stop();
+        isRecording = false;
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = async () => {
+          // Stop stream tracks
+          stream.getTracks().forEach(track => track.stop());
+
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          await sendAudioToBackend(audioBlob);
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        setState('recording');
+      } catch (err) {
+        showError("Microphone access denied or unsupported browser.");
+      }
+    }
+
+    // Send Audio Blob to Backend Endpoint
+    async function sendAudioToBackend(blob) {
+      setState('thinking');
+      const formData = new FormData();
+      formData.append('audio', blob, 'recording.webm');
+
+      try {
+        const res = await fetch('/process-audio', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Server error occurred');
+        }
+
+        displayAndPlayResponse(data.text, data.audio_b64);
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    // Send Text Prompt to Backend Endpoint
+    async function sendTextToBackend() {
+      const text = textInput.value.trim();
+      if (!text) return;
+
+      textInput.value = '';
+      setState('thinking');
+
+      try {
+        const res = await fetch('/process-text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+
+        const data = await res.json();
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Server error occurred');
+        }
+
+        displayAndPlayResponse(data.text, data.audio_b64);
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    // Display Text & Play Audio Base64
+    function displayAndPlayResponse(text, audioB64) {
+      chatCard.style.display = 'flex';
+      responseText.textContent = text;
+
+      if (currentAudio) {
+        currentAudio.pause();
+      }
+
+      currentAudio = new Audio('data:audio/mp3;base64,' + audioB64);
+      setState('speaking');
+
+      currentAudio.play().catch(e => {
+        console.warn("Audio autoplay blocked by browser:", e);
+        setState('idle', 'Response ready (Tap orb to repeat)');
+      });
+
+      currentAudio.onended = () => {
+        setState('idle');
+      };
+    }
+
+    // Event Listeners
+    orbBtn.addEventListener('click', toggleRecording);
+    sendBtn.addEventListener('click', sendTextToBackend);
+    textInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendTextToBackend();
+    });
+  </script>
+</body>
+</html>
